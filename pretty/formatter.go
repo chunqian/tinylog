@@ -53,7 +53,7 @@ func (fo formatter) passThrough(f fmt.State, c rune) {
 
 func (fo formatter) Format(f fmt.State, c rune) {
 	if fo.force || c == 'v' && f.Flag('#') && f.Flag(' ') {
-		w := tabwriter.NewWriter(f, 4, 4, 1, ' ', 0)
+		w := tabwriter.NewWriter(f, 2, 2, 1, ' ', 0)
 		p := &printer{tw: w, Writer: w, visited: make(map[visit]int)}
 		p.printValue(fo.v, true, fo.quote)
 		w.Flush()
@@ -71,7 +71,7 @@ type printer struct {
 
 func (p *printer) indent() *printer {
 	q := *p
-	q.tw = tabwriter.NewWriter(p.Writer, 4, 4, 1, ' ', 0)
+	q.tw = tabwriter.NewWriter(p.Writer, 2, 2, 1, ' ', 0)
 	q.Writer = text.NewIndentWriter(q.tw, []byte{'\t'})
 	return &q
 }

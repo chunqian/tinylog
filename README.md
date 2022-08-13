@@ -40,13 +40,13 @@ func main() {
 ## output
 ```shell
 [INFO] Tiny: main.Tiny{
-    name:   "tiny",
-    number: 100,
-    keys:   {1, 2, 3, 4, 5, 6},
-    dict:   {
-        "start": int(123),
-        "end":   int(456),
-    },
+  name:   "tiny",
+  number: 100,
+  keys:   {1, 2, 3, 4, 5, 6},
+  dict:   {
+    "start": int(123),
+    "end":   int(456),
+  },
 }
 [DEBUG] Say: Hello, Go!
 [WARN] Say: Hello, Go!

@@ -133,23 +133,18 @@ func Print(level Level, depth int, addNewline bool, args ...interface{}) {
 		switch level {
 		case DEBUG:
 			formatBuf.WriteString("[\033[34m%s\033[0m] ")
-			selected = append(selected, levelFlags[level])
 		case INFO:
 			formatBuf.WriteString("[\033[36m%s\033[0m] ")
-			selected = append(selected, levelFlags[level])
 		case WARNING:
 			formatBuf.WriteString("[\033[33m%s\033[0m] ")
-			selected = append(selected, levelFlags[level])
 		case ERROR:
 			formatBuf.WriteString("[\033[31m%s\033[0m] ")
-			selected = append(selected, levelFlags[level])
 		case FATAL:
 			formatBuf.WriteString("[\033[35m%s\033[0m] ")
-			selected = append(selected, levelFlags[level])
 		default:
 			formatBuf.WriteString("[%s] ")
-			selected = append(selected, levelFlags[level])
 		}
+		selected = append(selected, levelFlags[level])
 	}
 
 	if ShowDepth {

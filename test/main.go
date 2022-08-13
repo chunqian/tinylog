@@ -11,9 +11,9 @@ import (
 )
 
 type Tiny struct {
-    name     string
-    number   int
-    keys     []int
+    name   string
+    number int
+    keys   []int
     dict   map[string]any
 }
 

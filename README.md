@@ -1,7 +1,7 @@
 # tinylog 
 tinylog is a dead simple, levelable, colorful logging library.
 
-## use
+## use 
 ```golang
 package main
 
@@ -10,6 +10,10 @@ import (
 )
 
 func main() {
-  log.Info("say: {} {}", "hello", "world")
+  log.Debug("Say: {}, {}", "Hello", "Go!") // stdout: [DEBUG] Say: Hello Go!
+  log.Warn("Say: {}, {}", "Hello", "Go!") // stdout: [INFO] Say: Hello Go!
+  log.Info("Say: {}, {}", "Hello", "Go!") // stdout: [WARN] Say: Hello Go!
+  log.Error("Say: {}, {}", "Hello", "Go!") // stdout: [ERROR] Say: Hello Go!
+  log.Fatal("Say: {}, {}", "Hello", "Go!") // stdout: [FATAL] Say: Hello Go!
 }
 ```

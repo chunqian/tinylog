@@ -7,13 +7,13 @@
 package log
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/chunqian/tinylog/pretty"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
-	"bytes"
-	"github.com/chunqian/tinylog/pretty"
 	"time"
 )
 
@@ -21,10 +21,10 @@ var (
 	Prefix     = "[Log]"
 	TimeFormat = "06-01-02 15:04:05"
 
-	NonColor   bool
-	ShowDepth  bool
-	ShowTime   bool
-	ShowPrefix bool
+	NonColor           bool
+	ShowDepth          bool
+	ShowTime           bool
+	ShowPrefix         bool
 	DefaultCallerDepth = 3
 
 	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
@@ -34,8 +34,8 @@ func init() {
 	if runtime.GOOS == "windows" {
 		NonColor = true
 	}
-	ShowDepth  = false
-	ShowTime   = false
+	ShowDepth = false
+	ShowTime = false
 	ShowPrefix = false
 }
 
@@ -65,15 +65,15 @@ func Print(level Level, depth int, addNewline bool, args ...interface{}) {
 	// Add all the string arguments to the buffer
 	for i := 0; i < top; i++ {
 		var value = args[i]
-		if (i == 0) {
+		if i == 0 {
 			format = value.(string)
 			formatSlice = strings.Split(format, "{}")
 		}
-		if (i > len(formatSlice)) {
+		if i > len(formatSlice) {
 			break
 		}
-		
-		if (i > 0) {
+
+		if i > 0 {
 			var mStr = ""
 			switch value.(type) {
 			case string:

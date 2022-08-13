@@ -97,7 +97,7 @@ var gosyntax = []test{
 		`[]string{"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"}`,
 	},
 	{F(5), "pretty.F(5)"},
-	{ NewStructWithPrivateFields("foo"), `NewStructWithPrivateFields("foo")`},
+	{NewStructWithPrivateFields("foo"), `NewStructWithPrivateFields("foo")`},
 	{
 		SA{&T{1, 2}, T{3, 4}},
 		`pretty.SA{

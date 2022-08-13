@@ -21,7 +21,7 @@ type formatter struct {
 // breaks and tabs. Object f responds to the "%v" formatting verb when both the
 // "#" and " " (space) flags are set, for example:
 //
-//     fmt.Sprintf("%# v", Formatter(x))
+// fmt.Sprintf("%# v", Formatter(x))
 //
 // If one of these two flags is not set, or any other verb is used, f will
 // format x according to the usual rules of package fmt.
@@ -159,52 +159,52 @@ func (p *printer) printValue(v reflect.Value, showType, quote bool) {
 		writeByte(p, '}')
 	// case reflect.Struct:
 	// 	fmt.Fprintf(p, "%#v", v)
-    case reflect.Struct:
-        t := v.Type()
-        if v.CanAddr() {
-            addr := v.UnsafeAddr()
-            if p.depth > 1 {
-                writeByte(p, '(')
-                writeByte(p, '*')
-                io.WriteString(p, v.Type().String())
-                fmt.Fprintf(p, ")(%#v)", addr)
-                break
-            }
-        }
+	case reflect.Struct:
+		t := v.Type()
+		if v.CanAddr() {
+			addr := v.UnsafeAddr()
+			if p.depth > 1 {
+				writeByte(p, '(')
+				writeByte(p, '*')
+				io.WriteString(p, v.Type().String())
+				fmt.Fprintf(p, ")(%#v)", addr)
+				break
+			}
+		}
 
-        if showType {
-            io.WriteString(p, t.String())
-        }
-        writeByte(p, '{')
-        if nonzero(v) {
-            expand := !canInline(v.Type())
-            pp := p
-            if expand {
-                writeByte(p, '\n')
-                pp = p.indent()
-            }
-            for i := 0; i < v.NumField(); i++ {
-                showTypeInStruct := true
-                if f := t.Field(i); f.Name != "" {
-                    io.WriteString(pp, f.Name)
-                    writeByte(pp, ':')
-                    if expand {
-                        writeByte(pp, '\t')
-                    }
-                    showTypeInStruct = labelType(f.Type)
-                }
-                pp.printValue(getField(v, i), showTypeInStruct, true)
-                if expand {
-                    io.WriteString(pp, ",\n")
-                } else if i < v.NumField()-1 {
-                    io.WriteString(pp, ", ")
-                }
-            }
-            if expand {
-                pp.tw.Flush()
-            }
-        }
-        writeByte(p, '}')
+		if showType {
+			io.WriteString(p, t.String())
+		}
+		writeByte(p, '{')
+		if nonzero(v) {
+			expand := !canInline(v.Type())
+			pp := p
+			if expand {
+				writeByte(p, '\n')
+				pp = p.indent()
+			}
+			for i := 0; i < v.NumField(); i++ {
+				showTypeInStruct := true
+				if f := t.Field(i); f.Name != "" {
+					io.WriteString(pp, f.Name)
+					writeByte(pp, ':')
+					if expand {
+						writeByte(pp, '\t')
+					}
+					showTypeInStruct = labelType(f.Type)
+				}
+				pp.printValue(getField(v, i), showTypeInStruct, true)
+				if expand {
+					io.WriteString(pp, ",\n")
+				} else if i < v.NumField()-1 {
+					io.WriteString(pp, ", ")
+				}
+			}
+			if expand {
+				pp.tw.Flush()
+			}
+		}
+		writeByte(p, '}')
 	case reflect.Interface:
 		switch e := v.Elem(); {
 		case e.Kind() == reflect.Invalid:

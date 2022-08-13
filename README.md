@@ -1,5 +1,5 @@
 # tinylog 
-slf4j like logging package for Go 
+tinylog is a dead simple, levelable, colorful logging library.
 
 ## use
 ```golang
@@ -10,6 +10,6 @@ import (
 )
 
 func main() {
-  log.Info("{} {}", "hello", "world")
+  log.Info("say: {} {}", "hello", "world")
 }
 ```

@@ -7,8 +7,6 @@
 package main
 
 import (
-	"os"
-
 	log "github.com/chunqian/tinylog"
 )
 
@@ -17,12 +15,6 @@ type Tiny struct {
 	number int
 	keys   []int
 	dict   map[string]any
-}
-
-func init() {
-	getwd, _ := os.Getwd()
-	writer, _ := log.NewWriter(getwd + "/logs/%Y/%m/%d/test.log")
-	log.SetOutput(writer)
 }
 
 func main() {

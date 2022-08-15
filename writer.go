@@ -1,5 +1,3 @@
-//go:build cronolog
-
 /**---------------------------------------------------------
  * name: writer.go
  * editor: shenchunqian

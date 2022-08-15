@@ -1,5 +1,3 @@
-//go:build !cronolog
-
 /**---------------------------------------------------------
  * name: log.go
  * author: shenchunqian
@@ -11,12 +9,13 @@ package log
 import (
 	"bytes"
 	"fmt"
-	"github.com/chunqian/tinylog/pretty"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/chunqian/tinylog/pretty"
 )
 
 var (
@@ -30,6 +29,8 @@ var (
 	DefaultCallerDepth = 3
 
 	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
+
+	logWriter *Writer
 )
 
 func init() {
@@ -50,6 +51,11 @@ const (
 	ERROR
 	FATAL
 )
+
+func SetOutput(writer *Writer) error {
+	logWriter = writer
+	return nil
+}
 
 func Print(level Level, depth int, addNewline bool, args ...interface{}) {
 	var buf bytes.Buffer
@@ -158,7 +164,11 @@ func Print(level Level, depth int, addNewline bool, args ...interface{}) {
 	selected = append(selected, buf.String())
 	formatBuf.WriteString("\n")
 
-	fmt.Printf(formatBuf.String(), selected...)
+	if logWriter != nil {
+		logWriter.Write([]byte(fmt.Sprintf(formatBuf.String(), selected...)))
+	} else {
+		fmt.Printf(formatBuf.String(), selected...)
+	}
 
 	if level == FATAL {
 		os.Exit(1)

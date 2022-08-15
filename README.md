@@ -46,7 +46,7 @@ func main() {
 
 ## output 
 ```shell
-go build -o stdlog ./test/
+go build -o stdlog ./test
 ./stdlog
 ```
 ```shell
@@ -93,6 +93,6 @@ func init() {
 
 ```
 ```shell
-go build -tags cronolog -o cronolog ./test/
+go build -tags cronolog -o cronolog ./test
 ./cronolog
 ```

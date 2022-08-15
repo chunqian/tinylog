@@ -9,7 +9,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	log "github.com/chunqian/tinylog"
@@ -18,7 +17,6 @@ import (
 func init() {
 	// create writer to writes message to a set of output files
 	getwd, _ := os.Getwd()
-	fmt.Println("getwd")
 	writer, _ := log.NewWriter(getwd + "/logs/%Y/%m/%d/test.log")
 	log.SetOutput(writer)
 }

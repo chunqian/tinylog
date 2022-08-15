@@ -3,12 +3,6 @@ tinylog is a dead simple, levelable, colorful logging library.
 
 ## use 
 ```golang
-/**---------------------------------------------------------
- * name: main.go
- * author: shenchunqian
- * created: 2022-08-13
- ---------------------------------------------------------*/
-
 package main
 
 import (
@@ -69,12 +63,6 @@ go build -o stdlog ./test
 ## output files 
 ```golang
 //go:build cronolog
-
-/**---------------------------------------------------------
- * name: cronolog.go
- * author: shenchunqian
- * created: 2022-08-13
- ---------------------------------------------------------*/
 
 package main
 

@@ -37,7 +37,7 @@ func main() {
 }
 ```
 
-## output
+## output 
 ```shell
 [INFO] Tiny: main.Tiny{
   name:   "tiny",
@@ -53,4 +53,12 @@ func main() {
 [INFO] Say: Hello, Go!
 [ERROR] Say: Hello, Go!
 [FATAL] Say: Hello, Go!
+```
+
+## output files 
+```golang
+// create writer to writes message to a set of output files
+getwd, _ := os.Getwd()
+writer, _ := log.NewWriter(getwd + "/logs/%Y/%m/%d/test.log")
+log.SetOutput(writer)
 ```

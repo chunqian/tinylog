@@ -104,7 +104,7 @@ func Print(level Level, depth int, addNewline bool, args ...any) {
 			format = value.(string)
 			formatSlice = strings.Split(format, "{}")
 		}
-		if i > len(formatSlice) {
+		if i >= len(formatSlice) {
 			break
 		}
 

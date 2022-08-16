@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"time"
@@ -57,13 +58,39 @@ func SetOutput(writer *Writer) error {
 	return nil
 }
 
-func Print(level Level, depth int, addNewline bool, args ...interface{}) {
-	var buf bytes.Buffer
+func expand(args ...any) []any {
 	top := len(args)
-	if top == 1 {
-		args = append(args, 0)
-		copy(args[1:], args[:])
-		args[0] = "{}"
+	args = append(args, 0)
+	copy(args[1:], args[:])
+	var fmtStr = ""
+	for i := 0; i < top; i++ {
+		if i == top-1 {
+			fmtStr += "{}"
+		} else {
+			fmtStr += "{}, "
+		}
+	}
+	args[0] = fmtStr
+	return args
+}
+
+func Print(level Level, depth int, addNewline bool, args ...any) {
+	var buf bytes.Buffer
+
+	top := len(args)
+	if top == 0 {
+		return
+	}
+
+	switch args[0].(type) {
+	case string:
+		matched, _ := regexp.MatchString(`{}`, args[0].(string))
+		if !matched {
+			args = expand(args...)
+			top = len(args)
+		}
+	default:
+		args = expand(args...)
 		top = len(args)
 	}
 
@@ -177,42 +204,42 @@ func Print(level Level, depth int, addNewline bool, args ...interface{}) {
 	return
 }
 
-func debugD(depth int, args ...interface{}) {
+func debugD(depth int, args ...any) {
 	Print(DEBUG, depth, false, args...)
 }
 
-func Debug(args ...interface{}) {
+func Debug(args ...any) {
 	debugD(-1, args...)
 }
 
-func warnD(depth int, args ...interface{}) {
+func warnD(depth int, args ...any) {
 	Print(WARNING, depth, false, args...)
 }
 
-func Warn(args ...interface{}) {
+func Warn(args ...any) {
 	warnD(-1, args...)
 }
 
-func infoD(depth int, args ...interface{}) {
+func infoD(depth int, args ...any) {
 	Print(INFO, depth, false, args...)
 }
 
-func Info(args ...interface{}) {
+func Info(args ...any) {
 	infoD(-1, args...)
 }
 
-func errorD(depth int, args ...interface{}) {
+func errorD(depth int, args ...any) {
 	Print(ERROR, depth, false, args...)
 }
 
-func Error(args ...interface{}) {
+func Error(args ...any) {
 	errorD(-1, args...)
 }
 
-func fatalD(depth int, args ...interface{}) {
+func fatalD(depth int, args ...any) {
 	Print(FATAL, depth, false, args...)
 }
 
-func Fatal(args ...interface{}) {
+func Fatal(args ...any) {
 	fatalD(-1, args...)
 }

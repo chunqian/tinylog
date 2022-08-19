@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strconv"
 	"text/tabwriter"
+	"unsafe"
 
 	"github.com/kr/text"
 	// "github.com/rogpeppe/go-internal/fmtsort"

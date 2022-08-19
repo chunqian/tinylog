@@ -15,6 +15,7 @@
   #define log_fatal(...)
   #define log_message(...)
 #else
+  #include <stdio.h>
   #define log_debug(...) printf(0, "DEBUG", __VA_ARGS__)
   #define log_info(...) printf(0, "INFO", __VA_ARGS__)
   #define log_warn(...) printf(0, "WARN", __VA_ARGS__)

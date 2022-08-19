@@ -4,11 +4,9 @@
  * created: 2022-08-19
  ---------------------------------------------------------*/
 
-package printf
+package main
 
 import (
-	"unsafe"
-
 	log "github.com/chunqian/tinylog"
 	"github.com/chunqian/tinylog/pretty"
 )
@@ -45,3 +43,9 @@ func printf(zero, level, format *int8, args ...interface{}) int32 {
 	}
 	return 0
 }
+
+func __swbuf(_c int32, _p *FILE) int32 {
+	return _c
+}
+
+type struct___sFILEX struct{}

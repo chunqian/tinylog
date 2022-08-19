@@ -32,6 +32,7 @@ var (
 	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
 
 	logWriter *Writer
+	cstringToGostring bool
 )
 
 func init() {
@@ -41,6 +42,7 @@ func init() {
 	ShowDepth = false
 	ShowTime = false
 	ShowPrefix = false
+	cstringToGostring = false
 }
 
 type Level int
@@ -55,6 +57,11 @@ const (
 
 func SetOutput(writer *Writer) error {
 	logWriter = writer
+	return nil
+}
+
+func SetCstringToGostring(b bool) error {
+	cstringToGostring = b
 	return nil
 }
 
@@ -114,7 +121,7 @@ func Print(level Level, depth int, addNewline bool, args ...any) {
 			case string:
 				mStr = strings.ReplaceAll(value.(string), "interface {}", "any")
 			default:
-				mStr = strings.ReplaceAll(fmt.Sprintf("%# v", pretty.Formatter(value)), "interface {}", "any")
+				mStr = strings.ReplaceAll(fmt.Sprintf("%# v", pretty.Formatter(value, cstringToGostring)), "interface {}", "any")
 			}
 			buf.WriteString(mStr)
 			buf.WriteString(formatSlice[i])

@@ -6,15 +6,36 @@ import (
 	"reflect"
 	"strconv"
 	"text/tabwriter"
+	"unsafe"
 
 	"github.com/kr/text"
 	// "github.com/rogpeppe/go-internal/fmtsort"
 )
 
 type formatter struct {
-	v     reflect.Value
-	force bool
-	quote bool
+	v        reflect.Value
+	force    bool
+	quote    bool
+	cstringToGostring bool
+}
+
+func gostring(s *int8) string {
+	n, arr := 0, (*[1 << 20]byte)(unsafe.Pointer(s))
+	for arr[n] != 0 {
+		n++
+	}
+	return string(arr[:n])
+}
+
+func arrayToGostring(arrayValue reflect.Value) string {
+	s := []int8{}
+	for i := 0; i < arrayValue.Len(); i++ {
+		v := arrayValue.Index(i).Int()
+		p := unsafe.Pointer(&v)
+		s = append(s, *(*int8)(p))
+	}
+	gs := gostring(&s[0])
+	return gs
 }
 
 // Formatter makes a wrapper, f, that will format x as go source with line
@@ -26,8 +47,8 @@ type formatter struct {
 // If one of these two flags is not set, or any other verb is used, f will
 // format x according to the usual rules of package fmt.
 // In particular, if x satisfies fmt.Formatter, then x.Format will be called.
-func Formatter(x interface{}) (f fmt.Formatter) {
-	return formatter{v: reflect.ValueOf(x), quote: true}
+func Formatter(x interface{}, b bool) (f fmt.Formatter) {
+	return formatter{v: reflect.ValueOf(x), quote: true, cstringToGostring: b}
 }
 
 func (fo formatter) String() string {
@@ -54,7 +75,7 @@ func (fo formatter) passThrough(f fmt.State, c rune) {
 func (fo formatter) Format(f fmt.State, c rune) {
 	if fo.force || c == 'v' && f.Flag('#') && f.Flag(' ') {
 		w := tabwriter.NewWriter(f, 2, 2, 1, ' ', 0)
-		p := &printer{tw: w, Writer: w, visited: make(map[visit]int)}
+		p := &printer{tw: w, Writer: w, visited: make(map[visit]int), cstringToGostring: fo.cstringToGostring}
 		p.printValue(fo.v, true, fo.quote)
 		w.Flush()
 		return
@@ -64,9 +85,10 @@ func (fo formatter) Format(f fmt.State, c rune) {
 
 type printer struct {
 	io.Writer
-	tw      *tabwriter.Writer
-	visited map[visit]int
-	depth   int
+	tw       *tabwriter.Writer
+	visited  map[visit]int
+	depth    int
+	cstringToGostring bool
 }
 
 func (p *printer) indent() *printer {
@@ -158,7 +180,7 @@ func (p *printer) printValue(v reflect.Value, showType, quote bool) {
 		}
 		writeByte(p, '}')
 	// case reflect.Struct:
-	// 	fmt.Fprintf(p, "%#v", v)
+	//  fmt.Fprintf(p, "%#v", v)
 	case reflect.Struct:
 		t := v.Type()
 		if v.CanAddr() {
@@ -217,7 +239,47 @@ func (p *printer) printValue(v reflect.Value, showType, quote bool) {
 			io.WriteString(p, v.Type().String())
 			io.WriteString(p, "(nil)")
 		}
-	case reflect.Array, reflect.Slice:
+	case reflect.Array:
+		if !p.cstringToGostring {
+			t := v.Type()
+			if showType {
+				io.WriteString(p, t.String())
+			}
+			if v.Kind() == reflect.Slice && v.IsNil() && showType {
+				io.WriteString(p, "(nil)")
+				break
+			}
+			if v.Kind() == reflect.Slice && v.IsNil() {
+				io.WriteString(p, "nil")
+				break
+			}
+			writeByte(p, '{')
+			expand := !canInline(v.Type())
+			pp := p
+			if expand {
+				writeByte(p, '\n')
+				pp = p.indent()
+			}
+			for i := 0; i < v.Len(); i++ {
+				showTypeInSlice := t.Elem().Kind() == reflect.Interface
+				pp.printValue(v.Index(i), showTypeInSlice, true)
+				if expand {
+					io.WriteString(pp, ",\n")
+				} else if i < v.Len()-1 {
+					io.WriteString(pp, ", ")
+				}
+			}
+			if expand {
+				pp.tw.Flush()
+			}
+			writeByte(p, '}')
+		} else {
+			// array to gostring
+			writeByte(p, '"')
+			io.WriteString(p, arrayToGostring(v))
+			writeByte(p, '"')
+		}
+	case reflect.Slice:
 		t := v.Type()
 		if showType {
 			io.WriteString(p, t.String())

@@ -19,7 +19,7 @@ type formatter struct {
 	cstringToGostring bool
 }
 
-func gostring(s *int8) string {
+func Gostring(s *int8) string {
 	n, arr := 0, (*[1 << 20]byte)(unsafe.Pointer(s))
 	for arr[n] != 0 {
 		n++
@@ -34,7 +34,7 @@ func arrayToGostring(arrayValue reflect.Value) string {
 		p := unsafe.Pointer(&v)
 		s = append(s, *(*int8)(p))
 	}
-	gs := gostring(&s[0])
+	gs := Gostring(&s[0])
 	return gs
 }
 

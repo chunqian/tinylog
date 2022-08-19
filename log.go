@@ -121,7 +121,13 @@ func Print(level Level, depth int, addNewline bool, args ...any) {
 			case string:
 				mStr = strings.ReplaceAll(value.(string), "interface {}", "any")
 			default:
-				mStr = strings.ReplaceAll(fmt.Sprintf("%# v", pretty.Formatter(value, cstringToGostring)), "interface {}", "any")
+				var ivalue = value
+				if cstringToGostring {
+					if v, ok := value.(*int8); ok {
+						ivalue = pretty.Gostring(v)
+					}
+				}
+				mStr = strings.ReplaceAll(fmt.Sprintf("%# v", pretty.Formatter(ivalue, cstringToGostring)), "interface {}", "any")
 			}
 			buf.WriteString(mStr)
 			buf.WriteString(formatSlice[i])

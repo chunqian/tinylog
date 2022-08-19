@@ -11,6 +11,14 @@ import (
 	// "github.com/rogpeppe/go-internal/fmtsort"
 )
 
+func Gostring[T *int8 | *uint8](s T) string {
+	n, arr := 0, (*[1 << 20]byte)(unsafe.Pointer(s))
+	for arr[n] != 0 {
+		n++
+	}
+	return string(arr[:n])
+}
+
 type formatter struct {
 	v     reflect.Value
 	force bool

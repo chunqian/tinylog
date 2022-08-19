@@ -29,7 +29,7 @@ var (
 	ShowPrefix         bool
 	DefaultCallerDepth = 3
 
-	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
+	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL", "MESSAGE"}
 
 	logWriter *Writer
 )
@@ -51,6 +51,7 @@ const (
 	WARNING
 	ERROR
 	FATAL
+	MESSAGE
 )
 
 func SetOutput(writer *Writer) error {
@@ -176,6 +177,8 @@ func Print(level Level, depth int, addNewline bool, args ...any) {
 			formatBuf.WriteString("[\033[31m%s\033[0m] ")
 		case FATAL:
 			formatBuf.WriteString("[\033[35m%s\033[0m] ")
+		case MESSAGE:
+			formatBuf.WriteString("[\033[34m%s\033[0m] ")
 		default:
 			formatBuf.WriteString("[%s] ")
 		}
@@ -242,4 +245,12 @@ func fatalD(depth int, args ...any) {
 
 func Fatal(args ...any) {
 	fatalD(-1, args...)
+}
+
+func messageD(depth int, args ...any) {
+	Print(MESSAGE, depth, false, args...)
+}
+
+func Message(args ...any) {
+	messageD(-1, args...)
 }

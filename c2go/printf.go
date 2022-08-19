@@ -39,7 +39,7 @@ func printf(zero, level, format *int8, args ...interface{}) int32 {
 				args[i] = pretty.Gostring(v)
 			}
 		}
-		log.Debug(args...)
+		log.Message(args...)
 	}
 	return 0
 }

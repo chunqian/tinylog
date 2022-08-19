@@ -43,9 +43,3 @@ func printf(zero, level, format *int8, args ...interface{}) int32 {
 	}
 	return 0
 }
-
-func __swbuf(_c int32, _p *FILE) int32 {
-	return _c
-}
-
-type struct___sFILEX struct{}

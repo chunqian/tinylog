@@ -82,8 +82,13 @@ func expandToEnd(args ...any) []any {
 		s := strings.Split(args[0].(string), "{}")
 		count = len(s) - 1
 	}
-	for i := 0; i < count; i++ {
-		args = append(args, "")
+
+	var diff_count = 0
+	if len(args)-1 < count {
+		diff_count = count - (len(args) - 1)
+	}
+	for i := 0; i < diff_count; i++ {
+		args = append(args, "not found!")
 	}
 	return args
 }
@@ -101,12 +106,10 @@ func Print(level Level, depth int, addNewline bool, args ...any) {
 		matched, _ := regexp.MatchString(`{}`, args[0].(string))
 		if !matched {
 			args = expandToFront(args...)
-			top = len(args)
-		}
-		if matched && top == 1 {
+		} else {
 			args = expandToEnd(args...)
-			top = len(args)
 		}
+		top = len(args)
 	default:
 		args = expandToFront(args...)
 		top = len(args)

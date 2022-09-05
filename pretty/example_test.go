@@ -13,8 +13,8 @@ func Example() {
 	fmt.Printf("%# v", pretty.Formatter(x))
 	// output:
 	// []pretty_test.myType{
-	//     {a:1, b:2},
-	//     {a:3, b:4},
-	//     {a:5, b:6},
+	//   {a:1, b:2},
+	//   {a:3, b:4},
+	//   {a:5, b:6},
 	// }
 }

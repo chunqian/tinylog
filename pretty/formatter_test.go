@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 	"testing"
+	"time"
 	"unsafe"
 )
 
@@ -101,20 +102,20 @@ var gosyntax = []test{
 	{
 		SA{&T{1, 2}, T{3, 4}},
 		`pretty.SA{
-    t:  &pretty.T{x:1, y:2},
-    v:  pretty.T{x:3, y:4},
+  t: &pretty.T{x:1, y:2},
+  v: pretty.T{x:3, y:4},
 }`,
 	},
 	{
 		map[int][]byte{1: {}},
 		`map[int][]uint8{
-    1:  {},
+  1: {},
 }`,
 	},
 	{
 		map[int]T{1: {}},
 		`map[int]pretty.T{
-    1:  {},
+  1: {},
 }`,
 	},
 	{
@@ -127,8 +128,8 @@ var gosyntax = []test{
 			otherLongFieldName: long,
 		},
 		`pretty.LongStructTypeName{
-    longFieldName:      pretty.LongStructTypeName{},
-    otherLongFieldName: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+  longFieldName:      pretty.LongStructTypeName{},
+  otherLongFieldName: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
 }`,
 	},
 	{
@@ -138,15 +139,15 @@ var gosyntax = []test{
 			{long, nil},
 		},
 		`[]pretty.LongStructTypeName{
-    {},
-    {
-        longFieldName:      int(3),
-        otherLongFieldName: int(3),
-    },
-    {
-        longFieldName:      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        otherLongFieldName: nil,
-    },
+  {},
+  {
+    longFieldName:      int(3),
+    otherLongFieldName: int(3),
+  },
+  {
+    longFieldName:      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+    otherLongFieldName: nil,
+  },
 }`,
 	},
 	{
@@ -157,15 +158,50 @@ var gosyntax = []test{
 			LongStructTypeName{long, nil},
 		},
 		`[]interface {}{
-    pretty.LongStructTypeName{},
-    []uint8{0x1, 0x2, 0x3},
-    pretty.T{x:3, y:4},
-    pretty.LongStructTypeName{
-        longFieldName:      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        otherLongFieldName: nil,
-    },
+  pretty.LongStructTypeName{},
+  []uint8{0x1, 0x2, 0x3},
+  pretty.T{x:3, y:4},
+  pretty.LongStructTypeName{
+    longFieldName:      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+    otherLongFieldName: nil,
+  },
 }`,
 	},
+	{(*time.Time)(nil), "(*time.Time)(nil)"},
+	{&ValueGoString{"vgs"}, `VGS vgs`},
+	{(*ValueGoString)(nil), `(*pretty.ValueGoString)(nil)`},
+	{(*VGSWrapper)(nil), `(*pretty.VGSWrapper)(nil)`},
+	{&PointerGoString{"pgs"}, `PGS pgs`},
+	{(*PointerGoString)(nil), "(*pretty.PointerGoString)(nil)"},
+	{&PanicGoString{"oops!"}, `(*pretty.PanicGoString)(PANIC=calling method "GoString": oops!)`},
+}
+
+type ValueGoString struct {
+	s string
+}
+
+func (g ValueGoString) GoString() string {
+	return "VGS " + g.s
+}
+
+type VGSWrapper struct {
+	ValueGoString
+}
+
+type PointerGoString struct {
+	s string
+}
+
+func (g *PointerGoString) GoString() string {
+	return "PGS " + g.s
+}
+
+type PanicGoString struct {
+	s string
+}
+
+func (g *PanicGoString) GoString() string {
+	panic(g.s)
 }
 
 func TestGoSyntax(t *testing.T) {

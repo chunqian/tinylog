@@ -59,7 +59,7 @@ func SetOutput(writer *Writer) error {
 	return nil
 }
 
-func expand(args ...any) []any {
+func expandToFront(args ...any) []any {
 	top := len(args)
 	args = append(args, 0)
 	copy(args[1:], args[:])
@@ -75,6 +75,19 @@ func expand(args ...any) []any {
 	return args
 }
 
+func expandToEnd(args ...any) []any {
+	var count = 0
+	switch args[0].(type) {
+	case string:
+		s := strings.Split(args[0].(string), "{}")
+		count = len(s) - 1
+	}
+	for i := 0; i < count; i++ {
+		args = append(args, "")
+	}
+	return args
+}
+
 func Print(level Level, depth int, addNewline bool, args ...any) {
 	var buf bytes.Buffer
 
@@ -87,11 +100,15 @@ func Print(level Level, depth int, addNewline bool, args ...any) {
 	case string:
 		matched, _ := regexp.MatchString(`{}`, args[0].(string))
 		if !matched {
-			args = expand(args...)
+			args = expandToFront(args...)
+			top = len(args)
+		}
+		if matched && top == 1 {
+			args = expandToEnd(args...)
 			top = len(args)
 		}
 	default:
-		args = expand(args...)
+		args = expandToFront(args...)
 		top = len(args)
 	}
 
@@ -118,10 +135,8 @@ func Print(level Level, depth int, addNewline bool, args ...any) {
 				mStr = strings.ReplaceAll(fmt.Sprintf("%# v", pretty.Formatter(value)), "interface {}", "any")
 			}
 			buf.WriteString(mStr)
-			buf.WriteString(formatSlice[i])
-		} else {
-			buf.WriteString(formatSlice[i])
 		}
+		buf.WriteString(formatSlice[i])
 	}
 	if addNewline {
 		buf.WriteString("\n")

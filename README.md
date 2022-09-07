@@ -27,12 +27,16 @@ func main() {
     },
   }
 
+  msg := [6]int8{'H', 'e', 'l', 'l', 'o', '\x00'}
+  msg2 := [4]int8{'G', 'o', '!', '\x00'}
+
   log.Info("Tiny: {}", t)
 
   log.Debug("Say: {}, {}", "Hello", "Go!")
   log.Warn("Say: {}, {}", "Hello", "Go!")
   log.Info("Say: {}, {}", "Hello", "Go!")
   log.Error("Say: {}, {}", "Hello", "Go!")
+  log.Message("Say: {}, {}", &msg[0], &msg2[0])
   log.Fatal("Say: {}, {}", "Hello", "Go!")
 }
 
@@ -57,6 +61,7 @@ go build -o stdlog ./test
 [WARN] Say: Hello, Go!
 [INFO] Say: Hello, Go!
 [ERROR] Say: Hello, Go!
+[MESSAGE] Say: Hello, Go!
 [FATAL] Say: Hello, Go!
 ```
 

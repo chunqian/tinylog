@@ -131,6 +131,14 @@ func Print(level Level, depth int, addNewline bool, args ...any) {
 
 		if i > 0 {
 			var mStr = ""
+			if level == MESSAGE {
+	      if v, ok := value.(*int8); ok {
+	        value = pretty.Gostring(v)
+	      }
+	      if v, ok := value.(*uint8); ok {
+	        value = pretty.Gostring(v)
+	      }
+			}
 			switch value.(type) {
 			case string:
 				mStr = strings.ReplaceAll(value.(string), "interface {}", "any")

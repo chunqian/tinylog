@@ -5,6 +5,8 @@ tinylog is a dead simple, levelable, colorful logging library.
 ```golang
 package main
 
+import "C"
+
 import (
   log "github.com/chunqian/tinylog"
 )
@@ -29,6 +31,8 @@ func main() {
 
   msg := [6]int8{'H', 'e', 'l', 'l', 'o', '\x00'}
   msg2 := [4]int8{'G', 'o', '!', '\x00'}
+  msg3 := [6]C.char{'H', 'e', 'l', 'l', 'o', '\x00'}
+  msg4 := [4]C.char{'G', 'o', '!', '\x00'}
 
   log.Info("Tiny: {}", t)
 
@@ -37,6 +41,7 @@ func main() {
   log.Info("Say: {}, {}", "Hello", "Go!")
   log.Error("Say: {}, {}", "Hello", "Go!")
   log.Message("Say: {}, {}", &msg[0], &msg2[0])
+  log.Message("Say: {}, {}", unsafe.Pointer(&msg3[0]), unsafe.Pointer(&msg4[0]))
   log.Fatal("Say: {}, {}", "Hello", "Go!")
 }
 
@@ -61,6 +66,7 @@ go build -o stdlog ./test
 [WARN] Say: Hello, Go!
 [INFO] Say: Hello, Go!
 [ERROR] Say: Hello, Go!
+[MESSAGE] Say: Hello, Go!
 [MESSAGE] Say: Hello, Go!
 [FATAL] Say: Hello, Go!
 ```

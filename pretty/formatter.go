@@ -20,6 +20,14 @@ func Gostring[T *int8 | *uint8](s T) string {
 	return string(arr[:n])
 }
 
+func Gostring2(s unsafe.Pointer) string {
+	n, arr := 0, (*[1 << 20]byte)(s)
+	for arr[n] != 0 {
+		n++
+	}
+	return string(arr[:n])
+}
+
 type formatter struct {
 	v     reflect.Value
 	force bool

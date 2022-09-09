@@ -30,7 +30,7 @@ var (
 	ShowPrefix         bool
 	DefaultCallerDepth = 3
 
-	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL", "MESSAGE"}
+	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL", "MESSAGE", "POINTER"}
 
 	logWriter *Writer
 )
@@ -53,6 +53,7 @@ const (
 	ERROR
 	FATAL
 	MESSAGE
+	POINTER
 )
 
 func SetOutput(writer *Writer) error {
@@ -142,6 +143,9 @@ func Print(level Level, depth int, addNewline bool, args ...any) {
 				if v, ok := value.(unsafe.Pointer); ok {
 					value = pretty.Gostring2(v)
 				}
+			}
+			if level == POINTER {
+				value = fmt.Sprintf("%p", value)
 			}
 			switch value.(type) {
 			case string:
@@ -283,4 +287,12 @@ func messageD(depth int, args ...any) {
 
 func Message(args ...any) {
 	messageD(-1, args...)
+}
+
+func pointerD(depth int, args ...any) {
+	Print(POINTER, depth, false, args...)
+}
+
+func Pointer(args ...any) {
+	pointerD(-1, args...)
 }

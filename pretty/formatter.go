@@ -12,20 +12,42 @@ import (
 	// "github.com/rogpeppe/go-internal/fmtsort"
 )
 
-func Gostring[T *int8 | *uint8](s T) string {
-	n, arr := 0, (*[1 << 20]byte)(unsafe.Pointer(s))
-	for arr[n] != 0 {
-		n++
+func CStringLen[T *int8 | *uint8](dst T) int {
+	var len int = 0
+	if !(dst != nil) {
+		panic("NULL pointer assert!")
 	}
-	return string(arr[:n])
+	ret := func() (_cgo_ret int) {
+		_cgo_addr := &len
+		_cgo_ret = *_cgo_addr
+		*_cgo_addr++
+		return
+	}
+	for *(*int8)(unsafe.Pointer(uintptr(unsafe.Pointer(dst)) + uintptr(ret()))) != 0 {
+	}
+	return len - 1
 }
 
-func Gostring2(s unsafe.Pointer) string {
-	n, arr := 0, (*[1 << 20]byte)(s)
-	for arr[n] != 0 {
-		n++
-	}
-	return string(arr[:n])
+func Gostring[T *int8 | *uint8](cstr T) string {
+  len := CStringLen(cstr)
+
+  s := make([]byte, len)
+  sh := (*reflect.SliceHeader)(unsafe.Pointer(&s))
+  sh.Data = (uintptr)(unsafe.Pointer(cstr))
+  sh.Len = int(len)
+  sh.Cap = int(len)
+  return string(*(*[]byte)(unsafe.Pointer(sh)))
+}
+
+func Gostring2(cstr unsafe.Pointer) string {
+  len := CStringLen((*int8)(cstr))
+
+  s := make([]byte, len)
+  sh := (*reflect.SliceHeader)(unsafe.Pointer(&s))
+  sh.Data = (uintptr)(unsafe.Pointer(cstr))
+  sh.Len = int(len)
+  sh.Cap = int(len)
+  return string(*(*[]byte)(unsafe.Pointer(sh)))
 }
 
 type formatter struct {

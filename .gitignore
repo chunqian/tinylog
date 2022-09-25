@@ -1,2 +1,4 @@
-# Ignore
+# ignore
 .DS_Store
+stdlog
+cronolog

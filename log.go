@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"runtime/debug"
 	"strings"
 	"time"
 	"unsafe"
@@ -295,4 +296,8 @@ func pointerD(depth int, args ...any) {
 
 func Pointer(args ...any) {
 	pointerD(-1, args...)
+}
+
+func Stack() string {
+	return string(debug.Stack())
 }
